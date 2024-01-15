@@ -1,4 +1,8 @@
-
+module "eks-iam-roles" {
+  source  = "quadri-olamilekan/eks-iam-roles/aws"
+  version = "1.0.3"
+  pgp_key = var.pgp_key
+}
 
 #1. Create VPC
 resource "aws_vpc" "main" {

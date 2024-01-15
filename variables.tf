@@ -1,3 +1,8 @@
+variable "pgp_key" {
+  type        = string
+  description = "PGP key used for encrypting user login profiles"
+}
+
 variable "vpc_cidr" {
   type        = string
   description = "VPC CIDR"

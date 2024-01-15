@@ -8,19 +8,19 @@ output "public" {
 }
 
 output "node_role" {
-  value = module.iam_role.node_role
+  value = module.eks-iam-roles.node_role
 }
 
 output "cluster_role" {
-  value = module.iam_role.cluster_role
+  value = module.eks-iam-roles.cluster_role
 }
 
 output "developer_password" {
-  value = module.eks-user.developer_password
+  value = module.eks-iam-roles.developer_password
 }
 
 output "admin_password" {
-  value = module.eks-user.admin_password
+  value = module.eks-iam-roles.admin_password
 }
 
 output "vpc_id" {
