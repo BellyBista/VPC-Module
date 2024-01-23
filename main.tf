@@ -1,10 +1,3 @@
-module "eks-iam-roles" {
-  source  = "quadri-olamilekan/eks-iam-roles/aws"
-  version = "1.0.3"
-  pgp_key = var.pgp_key
-}
-
-#1. Create VPC
 resource "aws_vpc" "main" {
   cidr_block           = var.vpc_cidr
   instance_tenancy     = "default"
@@ -15,7 +8,6 @@ resource "aws_vpc" "main" {
   }
 }
 
-#2. Create IGW
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
 
@@ -24,7 +16,6 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-#3. Create EIP
 resource "aws_eip" "nat" {
 
   tags = {
@@ -33,7 +24,6 @@ resource "aws_eip" "nat" {
 
 }
 
-#4. Create NAT gateway
 resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat.id
   subnet_id     = aws_subnet.public[0].id
@@ -45,7 +35,6 @@ resource "aws_nat_gateway" "nat" {
   depends_on = [aws_internet_gateway.igw]
 }
 
-#5. Create private subnet
 resource "aws_subnet" "private" {
   count             = length(var.private_cidr)
   vpc_id            = aws_vpc.main.id
@@ -59,13 +48,12 @@ resource "aws_subnet" "private" {
   }
 }
 
-#6. Create public subnet
 resource "aws_subnet" "public" {
   count                   = length(var.public_cidr)
   vpc_id                  = aws_vpc.main.id
   cidr_block              = element(var.public_cidr, count.index)
   availability_zone       = element(var.availability_zones, count.index)
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
 
   tags = {
     "Name"                            = "public"
@@ -75,7 +63,6 @@ resource "aws_subnet" "public" {
 
 }
 
-#7. Create private route table
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 
@@ -87,7 +74,6 @@ resource "aws_route_table" "private" {
 
 }
 
-#8. Create public route table
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
@@ -99,7 +85,6 @@ resource "aws_route_table" "public" {
 
 }
 
-#9. Create public routes
 resource "aws_route" "public_internet_gateway" {
   route_table_id         = aws_route_table.public.id
   destination_cidr_block = "0.0.0.0/0"
@@ -109,7 +94,6 @@ resource "aws_route" "public_internet_gateway" {
 
 }
 
-#10. Create private routes
 resource "aws_route" "private_nat_gateway" {
   route_table_id         = aws_route_table.private.id
   nat_gateway_id         = aws_nat_gateway.nat.id
@@ -119,7 +103,6 @@ resource "aws_route" "private_nat_gateway" {
 
 }
 
-#11. Create private route association
 resource "aws_route_table_association" "private" {
   count = length(var.private_cidr)
 
@@ -130,7 +113,6 @@ resource "aws_route_table_association" "private" {
 
 }
 
-#12. Create public route association
 resource "aws_route_table_association" "public" {
   count = length(var.public_cidr)
 
@@ -138,5 +120,10 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public.id
 
   depends_on = [aws_route_table_association.private, aws_subnet.public]
+
+}
+
+resource "aws_default_security_group" "default" {
+  vpc_id = aws_vpc.main.id
 
 }
