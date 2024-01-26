@@ -42,9 +42,9 @@ resource "aws_subnet" "private" {
   availability_zone = element(var.availability_zones, count.index)
 
   tags = {
-    "Name"                            = "private"
-    "kubernetes.io/role/internal-elb" = "1"
-    "kubernetes.io/cluster/${var.project}"      = "owned"
+    "Name"                                 = "private"
+    "kubernetes.io/role/internal-elb"      = "1"
+    "kubernetes.io/cluster/${var.project}" = "owned"
   }
 }
 
@@ -57,9 +57,9 @@ resource "aws_subnet" "public" {
 
 
   tags = {
-    "Name"                            = "public"
-    "kubernetes.io/role/internal-elb" = "1"
-    "kubernetes.io/cluster/${var.project}"      = "owned"
+    "Name"                                 = "public"
+    "kubernetes.io/role/elb"               = "1"
+    "kubernetes.io/cluster/${var.project}" = "owned"
   }
 
 }

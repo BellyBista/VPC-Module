@@ -31,7 +31,7 @@ Security scanning is graciously provided by Bridgecrew. Bridgecrew is the leadin
 ```hcl
 module "eks-vpc" {
   source  = "quadri-olamilekan/eks-vpc/aws"
-  version = "1.0.3"
+  version = "1.0.4"
   # insert the required variables here
 }
 ```
